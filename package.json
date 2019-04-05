@@ -37,5 +37,8 @@
     "eslint-config-ostai": "^1.1.0",
     "eslint-plugin-import": "^2.13.0",
     "eslint": "^5.14.0"
+  },
+  "dependencies": {
+    "ctrip-apollo": "^2.0.1"
   }
 }
