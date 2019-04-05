@@ -15,7 +15,7 @@
 
 # roe-plugin-apollo-env
 
-Roe plugin to apply configurations from Ctrip's [apollo](https://github.com/ctripcorp/apollo) config service to `process.env`
+[Roe](https://github.com/kaelzhang/roe) plugin to apply configurations from Ctrip's [apollo](https://github.com/ctripcorp/apollo) config service to `process.env`
 
 ## Install
 
@@ -30,15 +30,23 @@ roe.config.js
 ```js
 const ApolloEnvPlugin = require('roe-plugin-apollo-env')
 
-config.plugins = [
-  new ApolloEnvPlugin({
-    host: process.env.APOLLO_HOST,
-    appId: 'my-app',
-    envs: {
-      READ_HOST: 'redis.host'
-    }
-  })
-]
+module.exports = {
+  plugins: [
+    new ApolloEnvPlugin({
+      host: process.env.APOLLO_HOST,
+      appId: 'my-app',
+      namespace: 'application',
+      envs: {
+        REDIS_HOST: 'redis.host',
+        REDIS_PORT: {
+          key: 'redis.port',
+          namespace: 'common'
+        }
+      }
+    })
+  ],
+  ...
+}
 ```
 
 ## License
