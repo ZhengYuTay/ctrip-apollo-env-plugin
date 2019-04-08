@@ -45,6 +45,9 @@ class ApolloEnvPlugin {
     process.env[envKey] = newValue
   }
 
+  // - envKey `string` env key name
+  // - key `string` apollo config key name
+  // - options `Object` apollo options
   _add (envKey, key, options) {
     const id = uniqueKey(options)
 
@@ -81,11 +84,17 @@ class ApolloEnvPlugin {
       key,
       ...opts
     } = typeof config === 'string'
+      // 'REDIS_HOST': 'redis.host'
       ? {
         key: config
       }
+      // 'REDIS_HOST': {
+      //   key: 'redis.host',
+      //   namespace: 'common'
+      // }
       : config
 
+    // Merge with the default options
     const options = {
       ...this._apolloOptions,
       ...opts

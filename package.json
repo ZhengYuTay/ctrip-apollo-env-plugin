@@ -1,7 +1,7 @@
 {
   "name": "roe-plugin-apollo-env",
-  "version": "1.0.0",
-  "description": "roe-plugin-apollo-env",
+  "version": "0.0.1",
+  "description": "Roe plugin to apply configurations from Ctrip's apollo config service to process.env",
   "main": "src/index.js",
   "scripts": {
     "test": "nyc ava --timeout=10s",
@@ -22,7 +22,7 @@
     "apollo"
   ],
   "engines": {
-    "node": ">= 6"
+    "node": ">= 8.6.0"
   },
   "ava": {
     "babel": false
