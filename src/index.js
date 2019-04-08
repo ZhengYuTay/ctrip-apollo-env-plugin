@@ -26,8 +26,8 @@ class ApolloEnvPlugin {
       const config = this._envKeyConfig[envKey]
       if (
         config.key === key
-        && config.namespace === config.namespace
-        && config.cluster === config.cluster
+        && config.namespace === namespace
+        && config.cluster === cluster
       ) {
         return envKey
       }
@@ -72,11 +72,11 @@ class ApolloEnvPlugin {
       return
     }
 
-    apolloClient.on('change', e => {
+    client.on('change', e => {
       this._applyChange(e, namespace, cluster)
     })
 
-    this._tasks.push(() => apolloClient.ready())
+    this._tasks.push(() => client.ready())
   }
 
   _addEnv (envKey, config) {
@@ -106,15 +106,15 @@ class ApolloEnvPlugin {
   _setEnv () {
     Object.keys(this._envKeyConfig).forEach(envKey => {
       const {key, id} = this._envKeyConfig[envKey]
-      const apollo = this._apollos[id]
-      process.env[envKey] = apollo.get(key)
+      const client = this._apollos[id]
+      process.env[envKey] = client.get(key)
     })
   }
 
   apply (lifecycle) {
     // post env
-    lifecycle.plugin('env', async () => {
-      const tasks = []
+    lifecycle.hooks.enviroment.tapPromise('ApolloEnvPlugin', async context => {
+      context.clearPlugins()
 
       Object.keys(this._envs).forEach(k => {
         this._addEnv(k, this._envs[k])
@@ -122,6 +122,10 @@ class ApolloEnvPlugin {
 
       await Promise.all(this._tasks)
       this._setEnv()
+      context.reloadConfig()
+      context.applyPlugins()
     })
   }
 }
+
+module.exports = ApolloEnvPlugin
