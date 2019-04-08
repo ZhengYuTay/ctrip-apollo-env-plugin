@@ -76,7 +76,7 @@ class ApolloEnvPlugin {
       this._applyChange(e, namespace, cluster)
     })
 
-    this._tasks.push(() => client.ready())
+    this._tasks.push(client.ready())
   }
 
   _addEnv (envKey, config) {
