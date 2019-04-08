@@ -41,6 +41,6 @@
     "eslint": "^5.16.0"
   },
   "dependencies": {
-    "ctrip-apollo": "^2.1.0"
+    "ctrip-apollo": "^3.0.0"
   }
 }
