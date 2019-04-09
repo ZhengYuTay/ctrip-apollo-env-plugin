@@ -1,4 +1,5 @@
 const apollo = require('ctrip-apollo')
+const log = require('util').debuglog('roe-plugin-apollo-env')
 
 const {AVAILABLE_OPTIONS} = apollo
 
@@ -8,6 +9,11 @@ const createKey = (...args) =>
 const uniqueKey = options => createKey(
   ...AVAILABLE_OPTIONS.map(key => options[key])
 )
+
+const setEnv = (key, value) => {
+  log('set env %s=%s', key, value)
+  process.env[key] = value
+}
 
 class ApolloEnvPlugin {
   constructor ({
@@ -42,7 +48,7 @@ class ApolloEnvPlugin {
       return
     }
 
-    process.env[envKey] = newValue
+    setEnv(envKey, newValue)
   }
 
   // - envKey `string` env key name
@@ -107,7 +113,7 @@ class ApolloEnvPlugin {
     Object.keys(this._envKeyConfig).forEach(envKey => {
       const {key, id} = this._envKeyConfig[envKey]
       const client = this._apollos[id]
-      process.env[envKey] = client.get(key)
+      setEnv(envKey, client.get(key))
     })
   }
 
