@@ -119,17 +119,13 @@ class ApolloEnvPlugin {
 
   apply (lifecycle) {
     // post env
-    lifecycle.hooks.environment.tapPromise('ApolloEnvPlugin', async context => {
-      context.clearPlugins()
-
+    lifecycle.hooks.environment.tapPromise('ApolloEnvPlugin', async () => {
       Object.keys(this._envs).forEach(k => {
         this._addEnv(k, this._envs[k])
       })
 
       await Promise.all(this._tasks)
       this._setEnv()
-      context.reloadConfig()
-      context.applyPlugins()
     })
   }
 }
