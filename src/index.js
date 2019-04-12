@@ -1,5 +1,5 @@
 const apollo = require('ctrip-apollo')
-const log = require('util').debuglog('roe-plugin-apollo-env')
+const log = require('util').debuglog('@caviar/plugin-apollo-env')
 
 const {AVAILABLE_OPTIONS} = apollo
 

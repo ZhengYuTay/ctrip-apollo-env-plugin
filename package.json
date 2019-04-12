@@ -1,11 +1,11 @@
 {
-  "name": "roe-plugin-apollo-env",
+  "name": "@caviar/plugin-apollo-env",
   "version": "2.0.0",
-  "description": "Roe plugin to apply configurations from Ctrip's apollo config service to process.env",
+  "description": "Caviar plugin to apply configurations from Ctrip's apollo config service to process.env",
   "main": "src/index.js",
   "scripts": {
     "test": "nyc ava --timeout=10s",
-    "test-no-report": "NODE_DEBUG=roe-plugin-apollo-env nyc ava --timeout=10s --verbose",
+    "test-no-report": "NODE_DEBUG=@caviar/plugin-apollo-env nyc ava --timeout=10s --verbose",
     "lint": "eslint .",
     "posttest": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
   },
@@ -14,11 +14,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/kaelzhang/roe-plugin-apollo-env.git"
+    "url": "git://github.com/kaelzhang/@caviar/plugin-apollo-env.git"
   },
   "keywords": [
-    "roe-plugin-apollo-env",
-    "roe-plugin",
+    "@caviar/plugin-apollo-env",
+    "Caviar-plugin",
     "apollo"
   ],
   "engines": {
@@ -30,10 +30,10 @@
   "author": "kaelzhang",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/kaelzhang/roe-plugin-apollo-env/issues"
+    "url": "https://github.com/kaelzhang/@caviar/plugin-apollo-env/issues"
   },
   "peerDependencies": {
-    "roe-scripts": ">= 1.2.0"
+    "Caviar-scripts": ">= 1.2.0"
   },
   "devDependencies": {
     "ava": "^1.4.1",
