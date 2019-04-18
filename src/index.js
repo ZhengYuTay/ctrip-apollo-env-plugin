@@ -18,6 +18,7 @@ const OVERRIDABLE_OPTIONS = [
   'namespace'
 ]
 
+const PLUGIN_NAME = 'ApolloEnvPlugin'
 const ENV_MAP_KEY = Symbol('keyEnv')
 
 const isSandbox = () => !process.env.CAVIAR_CWD
@@ -57,19 +58,6 @@ class ApolloEnvPlugin {
     this._nsMap = new Map()
     this._clients = []
     this._envKeyConfig = Object.create(null)
-  }
-
-  _findEnvKey (key, namespace, cluster) {
-    for (const envKey in this._envKeyConfig) {
-      const config = this._envKeyConfig[envKey]
-      if (
-        config.key === key
-        && config.namespace === namespace
-        && config.cluster === cluster
-      ) {
-        return envKey
-      }
-    }
   }
 
   _applyChange ({
@@ -129,15 +117,14 @@ class ApolloEnvPlugin {
       ? client[ENV_MAP_KEY]
       : (client[ENV_MAP_KEY] = Object.create(null))
 
-    // If in sandbox, we do not handle events
-    if (isSandbox()) {
-      return
-    }
-
     map[key] = envKey
 
-    if (hasMap) {
+    if (
+      // If in sandbox, we do not handle events
+      isSandbox()
       // Already initalized
+      || hasMap
+    ) {
       return
     }
 
@@ -171,23 +158,44 @@ class ApolloEnvPlugin {
     this._add(envKey, key, options)
   }
 
-  _setEnv () {
-    Object.keys(this._envKeyConfig).forEach(envKey => {
-      const {key, id} = this._envKeyConfig[envKey]
-      const client = this._apollos[id]
-      setEnv(envKey, client.get(key))
+  ready () {
+    const tasks = this._clients.map(client => client.ready())
+    return Promise.all(tasks)
+  }
+
+  setAll (setter = setEnv) {
+    this._clients.forEach(client => {
+      const map = client[ENV_MAP_KEY]
+
+      Object.keys(map).forEach(key => {
+        const envKey = map[key]
+        setter(envKey, client.get(key))
+      })
     })
   }
 
-  apply (lifecycle) {
-    // post env
-    lifecycle.hooks.environment.tapPromise('ApolloEnvPlugin', async () => {
-      Object.keys(this._envs).forEach(k => {
-        this._addEnv(k, this._envs[k])
-      })
+  get sandbox () {
+    return isSandbox()
+  }
 
-      await Promise.all(this._tasks)
-      this._setEnv()
+  apply (lifecycle) {
+    lifecycle.hooks.sandboxEnvironment.tapPromise(
+      PLUGIN_NAME,
+      async sandbox => {
+        // Configurations must be loaded outside the sandbox
+        await this.ready()
+        this.setAll(sandbox.setEnv)
+      }
+    )
+
+    lifecycle.hooks.start.tap(PLUGIN_NAME, () => {
+      this.ready().catch(err => {
+        log(
+          '%s: apollo fails to initialize when caviar starting, reason:\n%s',
+          PLUGIN_NAME,
+          err.stack
+        )
+      })
     })
   }
 }
