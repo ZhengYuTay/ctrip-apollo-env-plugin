@@ -1,14 +1,45 @@
 const apollo = require('ctrip-apollo')
-const log = require('util').debuglog('@caviar/plugin-apollo-env')
+const log = require('util').debuglog('caviar-plugin-apollo-env')
+const hasOwnProperty = require('has-own-prop')
 
-const {AVAILABLE_OPTIONS} = apollo
+const {error} = require('./error')
+
+const APOLLO_APP_OPTIONS = [
+  'host',
+  'appId',
+  'ip',
+  'dataCenter'
+]
+
+const OVERRIDABLE_OPTIONS = [
+  'host',
+  'appId',
+  'cluster',
+  'namespace'
+]
+
+const ENV_MAP_KEY = Symbol('keyEnv')
+
+const isSandbox = () => !process.env.CAVIAR_CWD
 
 const createKey = (...args) =>
   Buffer.from(args.join('|')).toString('base64')
 
+// Generate the unique key for apollo application
 const uniqueKey = options => createKey(
-  ...AVAILABLE_OPTIONS.map(key => options[key])
+  ...APOLLO_APP_OPTIONS.map(key => options[key])
 )
+
+const assignEnvOptions = (host, opts, envKey) => {
+  Object.keys(opts).forEach(key => {
+    if (OVERRIDABLE_OPTIONS.includes(key)) {
+      host[key] = opts[key]
+      return
+    }
+
+    throw error('INVALID_OPTION_FOR_KEY', key, envKey)
+  })
+}
 
 const setEnv = (key, value) => {
   log('set env %s=%s', key, value)
@@ -23,7 +54,8 @@ class ApolloEnvPlugin {
     this._apolloOptions = apolloOptions
     this._envs = envs
     this._apollos = Object.create(null)
-    this._tasks = []
+    this._nsMap = new Map()
+    this._clients = []
     this._envKeyConfig = Object.create(null)
   }
 
@@ -42,8 +74,8 @@ class ApolloEnvPlugin {
 
   _applyChange ({
     newValue, key
-  }, namespace, cluster) {
-    const envKey = this._findEnvKey(key, namespace, cluster)
+  }, map) {
+    const envKey = map[key]
     if (!envKey) {
       return
     }
@@ -51,38 +83,67 @@ class ApolloEnvPlugin {
     setEnv(envKey, newValue)
   }
 
+  _generateApp (options) {
+    return apollo(
+      isSandbox()
+        ? {
+          ...options,
+          // Do not enable update notification
+          enableUpdateNotification: false,
+          enableFetch: false,
+          // Always fetch from remote first
+          skipInitFetchIfCacheFound: false
+        }
+        : options
+    )
+  }
+
+  _getApp (options) {
+    const id = uniqueKey(options)
+
+    const defined = id in this._apollos
+    const app = defined
+      ? this._apollos[id]
+      : this._apollos[id] = this._generateApp(options)
+
+    return app
+  }
+
   // - envKey `string` env key name
   // - key `string` apollo config key name
   // - options `Object` apollo options
   _add (envKey, key, options) {
-    const id = uniqueKey(options)
+    const app = this._getApp(options)
 
-    const defined = id in this._apollos
-    const client = defined
-      ? this._apollos[id]
-      : this._apollos[id] = apollo(options)
+    const client = app
+    .cluster(options.cluster)
+    .namespace(options.namespace)
 
-    const {
-      namespace,
-      cluster
-    } = client
+    const hasMap = hasOwnProperty(client, ENV_MAP_KEY)
 
-    this._envKeyConfig[envKey] = {
-      key,
-      id,
-      namespace,
-      cluster
+    if (!hasMap) {
+      this._clients.push(client)
     }
 
-    if (defined) {
+    const map = hasMap
+      ? client[ENV_MAP_KEY]
+      : (client[ENV_MAP_KEY] = Object.create(null))
+
+    // If in sandbox, we do not handle events
+    if (isSandbox()) {
+      return
+    }
+
+    map[key] = envKey
+
+    if (hasMap) {
+      // Already initalized
       return
     }
 
     client.on('change', e => {
-      this._applyChange(e, namespace, cluster)
+      this._applyChange(e, map)
     })
-
-    this._tasks.push(client.ready())
   }
 
   _addEnv (envKey, config) {
@@ -103,8 +164,9 @@ class ApolloEnvPlugin {
     // Merge with the default options
     const options = {
       ...this._apolloOptions,
-      ...opts
     }
+
+    assignEnvOptions(options, opts, envKey)
 
     this._add(envKey, key, options)
   }

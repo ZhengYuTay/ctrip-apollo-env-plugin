@@ -1,6 +1,6 @@
 {
   "name": "@caviar/plugin-apollo-env",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Caviar plugin to apply configurations from Ctrip's apollo config service to process.env",
   "main": "src/index.js",
   "scripts": {
@@ -33,17 +33,19 @@
     "url": "https://github.com/kaelzhang/@caviar/plugin-apollo-env/issues"
   },
   "peerDependencies": {
-    "Caviar-scripts": ">= 1.2.0"
+    "caviar": ">= 2.0.0"
   },
   "devDependencies": {
     "ava": "^1.4.1",
     "codecov": "^3.3.0",
-    "nyc": "^13.3.0",
+    "nyc": "^14.0.0",
     "eslint-config-ostai": "^3.0.0",
-    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-import": "^2.17.2",
     "eslint": "^5.16.0"
   },
   "dependencies": {
-    "ctrip-apollo": "^3.0.0"
+    "ctrip-apollo": "^4.0.4",
+    "err-object": "^4.3.1",
+    "has-own-prop": "^1.0.1"
   }
 }
