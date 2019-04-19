@@ -174,21 +174,34 @@ class ApolloEnvPlugin {
     })
   }
 
+  init () {
+    Object.keys(this._envs).forEach(k => {
+      this._addEnv(k, this._envs[k])
+    })
+  }
+
   get sandbox () {
     return isSandbox()
   }
 
   apply (lifecycle) {
-    lifecycle.hooks.sandboxEnvironment.tapPromise(
-      PLUGIN_NAME,
-      async sandbox => {
-        // Configurations must be loaded outside the sandbox
-        await this.ready()
-        this.setAll(sandbox.setEnv)
-      }
-    )
+    if (isSandbox()) {
+      lifecycle.hooks.sandboxEnvironment.tapPromise(
+        PLUGIN_NAME,
+        async sandbox => {
+          this.init()
+
+          // Configurations must be loaded outside the sandbox
+          await this.ready()
+          this.setAll(sandbox.setEnv)
+        }
+      )
+
+      return
+    }
 
     lifecycle.hooks.start.tap(PLUGIN_NAME, () => {
+      this.init()
       this.ready().catch(err => {
         log(
           '%s: apollo fails to initialize when caviar starting, reason:\n%s',
