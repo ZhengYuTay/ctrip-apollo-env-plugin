@@ -1,5 +1,5 @@
 const test = require('ava')
-const log = require('util').debuglog('@caviar/plugin-apollo-env')
+const log = require('util').debuglog('@caviar/ctrip-apollo-env-plugin')
 const ApolloEnvPlugin = require('../src')
 
 test('description', t => {

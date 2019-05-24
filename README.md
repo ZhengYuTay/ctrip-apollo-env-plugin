@@ -1,14 +1,14 @@
-[![Build Status](https://travis-ci.org/kaelzhang/caviar-plugin-apollo-env.svg?branch=master)](https://travis-ci.org/kaelzhang/caviar-plugin-apollo-env)
-[![Coverage](https://codecov.io/gh/kaelzhang/caviar-plugin-apollo-env/branch/master/graph/badge.svg)](https://codecov.io/gh/kaelzhang/caviar-plugin-apollo-env)
+[![Build Status](https://travis-ci.org/caviarjs/ctrip-apollo-env-plugin.svg?branch=master)](https://travis-ci.org/caviarjs/ctrip-apollo-env-plugin)
+[![Coverage](https://codecov.io/gh/caviarjs/ctrip-apollo-env-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/caviarjs/ctrip-apollo-env-plugin)
 
-# @caviar/plugin-apollo-env
+# @caviar/ctrip-apollo-env-plugin
 
-[Caviar](https://github.com/kaelzhang/caviar) plugin to apply configurations from Ctrip's [apollo](https://github.com/ctripcorp/apollo) config service to `process.env`
+[Caviar](https://github.com/caviarjs/caviar) plugin to apply configurations from Ctrip's [apollo](https://github.com/ctripcorp/apollo) config service to `process.env`
 
 ## Install
 
 ```sh
-$ npm i @caviar/plugin-apollo-env
+$ npm i @caviar/ctrip-apollo-env-plugin
 ```
 
 ## Usage
@@ -16,7 +16,7 @@ $ npm i @caviar/plugin-apollo-env
 Caviar.config.js
 
 ```js
-const ApolloEnvPlugin = require('@caviar/plugin-apollo-env')
+const ApolloEnvPlugin = require('@caviar/ctrip-apollo-env-plugin')
 
 module.exports = {
   plugins: [

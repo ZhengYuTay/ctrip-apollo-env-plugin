@@ -1,11 +1,11 @@
 {
-  "name": "@caviar/plugin-apollo-env",
-  "version": "3.1.2",
+  "name": "@caviar/ctrip-apollo-env-plugin",
+  "version": "0.0.1",
   "description": "Caviar plugin to apply configurations from Ctrip's apollo config service to process.env",
   "main": "src/index.js",
   "scripts": {
     "test": "nyc ava --timeout=10s",
-    "test-no-report": "NODE_DEBUG=@caviar/plugin-apollo-env nyc ava --timeout=10s --verbose",
+    "test-no-report": "NODE_DEBUG=@caviar/ctrip-apollo-env-plugin nyc ava --timeout=10s --verbose",
     "lint": "eslint .",
     "posttest": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
   },
@@ -14,11 +14,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/kaelzhang/@caviar/plugin-apollo-env.git"
+    "url": "git://github.com/caviarjs/ctrip-apollo-env-plugin.git"
   },
   "keywords": [
-    "@caviar/plugin-apollo-env",
-    "Caviar-plugin",
+    "@caviar/ctrip-apollo-env-plugin",
+    "caviar-plugin",
+    "env-plugin",
     "apollo"
   ],
   "engines": {
@@ -30,7 +31,7 @@
   "author": "kaelzhang",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/kaelzhang/@caviar/plugin-apollo-env/issues"
+    "url": "https://github.com/caviarjs/ctrip-apollo-env-plugin/issues"
   },
   "devDependencies": {
     "ava": "^1.4.1",
