@@ -19,22 +19,25 @@ Caviar.config.js
 const ApolloEnvPlugin = require('@caviar/ctrip-apollo-env-plugin')
 
 module.exports = {
-  plugins: [
-    new ApolloEnvPlugin({
-      host: process.env.APOLLO_HOST,
-      appId: 'my-app',
-      namespace: 'application',
-      envs: {
-        REDIS_HOST: 'redis.host',
+  caviar: {
+    plugins: [
+      new ApolloEnvPlugin({
+        host: process.env.APOLLO_HOST,
+        appId: 'my-app',
+        namespace: 'application',
+        keys: {
+          REDIS_HOST: 'redis.host',
 
-        REDIS_PORT: {
-          key: 'redis.port',
-          // We can override the default namespace 'application'
-          namespace: 'common'
+          REDIS_PORT: {
+            key: 'redis.port',
+            // We can override the default namespace 'application'
+            namespace: 'common'
+          }
         }
-      }
-    })
-  ],
+      })
+    ],
+    ...
+  },
   ...
 }
 ```
