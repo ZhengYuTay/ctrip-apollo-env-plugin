@@ -16,7 +16,7 @@ class ApolloEnvPlugin {
     ...apolloOptions
   } = {}) {
     this._apolloOptions = apolloOptions
-    this._envs = keys
+    this._keys = keys
     this._app = this._generateApp()
   }
 
