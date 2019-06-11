@@ -1,6 +1,6 @@
 {
   "name": "@caviar/ctrip-apollo-env-plugin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Caviar plugin to apply configurations from Ctrip's apollo config service to process.env",
   "main": "src/index.js",
   "scripts": {
