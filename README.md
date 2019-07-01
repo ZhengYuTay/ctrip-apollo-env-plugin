@@ -45,7 +45,7 @@ module.exports = {
 ## new ApolloEnvPlugin(options)
 
 - **options** `Object`
-  - **envs** `{[string]: string | ConfigOptions}` pair of environment variable key and configuration key
+  - **keys** `{[string]: string | ConfigOptions}` pair of environment variable key and configuration key
   - ...**CtripApolloOptions** options of [`ctrip-apollo`](https://github.com/kaelzhang/ctrip-apollo)
 
 ```ts
