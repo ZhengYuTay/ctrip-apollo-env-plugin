@@ -3,7 +3,7 @@ const log = require('util').debuglog('caviar-plugin-apollo-env')
 
 const PLUGIN_NAME = 'ApolloEnvPlugin'
 
-const isSandbox = () => !process.env.CAVIAR_CWD
+const isOutsideSandbox = () => !process.env.CAVIAR_SANDBOX
 
 const setEnv = (key, value) => {
   log('set env %s=%s', key, value)
@@ -21,7 +21,7 @@ class ApolloEnvPlugin {
   }
 
   _generateApp () {
-    const sandbox = isSandbox()
+    const sandbox = isOutsideSandbox()
     const options = sandbox
       ? {
         ...this._apolloOptions,
@@ -58,13 +58,13 @@ class ApolloEnvPlugin {
   }
 
   get sandbox () {
-    return isSandbox()
+    return isOutsideSandbox()
   }
 
   apply (getHooks) {
     const hooks = getHooks()
 
-    if (isSandbox()) {
+    if (isOutsideSandbox()) {
       hooks.sandboxEnvironment.tapPromise(
         PLUGIN_NAME,
         async sandbox => {
