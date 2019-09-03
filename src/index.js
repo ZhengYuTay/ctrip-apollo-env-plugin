@@ -3,7 +3,7 @@ const log = require('util').debuglog('caviar-plugin-apollo-env')
 
 const PLUGIN_NAME = 'ApolloEnvPlugin'
 
-const isOutsideSandbox = () => !process.env.CAVIAR_SANDBOX
+const isNotInSandbox = () => !process.env.CAVIAR_SANDBOX
 
 const setEnv = (key, value) => {
   log('set env %s=%s', key, value)
@@ -21,7 +21,7 @@ class ApolloEnvPlugin {
   }
 
   _generateApp () {
-    const sandbox = isOutsideSandbox()
+    const sandbox = isNotInSandbox()
     const options = sandbox
       ? {
         ...this._apolloOptions,
@@ -58,13 +58,13 @@ class ApolloEnvPlugin {
   }
 
   get sandbox () {
-    return isOutsideSandbox()
+    return isNotInSandbox()
   }
 
   apply (getHooks) {
     const hooks = getHooks()
 
-    if (isOutsideSandbox()) {
+    if (isNotInSandbox()) {
       hooks.sandboxEnvironment.tapPromise(
         PLUGIN_NAME,
         async sandbox => {
@@ -78,6 +78,8 @@ class ApolloEnvPlugin {
     }
 
     hooks.start.tap(PLUGIN_NAME, () => {
+      // Then the process inside the sandbox could receive
+      // apollo update notifications
       this.ready().catch(err => {
         // eslint-disable-next-line no-console
         console.error(
