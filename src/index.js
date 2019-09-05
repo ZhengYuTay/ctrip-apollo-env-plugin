@@ -3,12 +3,12 @@ const log = require('util').debuglog('caviar-plugin-apollo-env')
 
 const PLUGIN_NAME = 'ApolloEnvPlugin'
 
-const isNotInSandbox = () => !process.env.CAVIAR_SANDBOX
-
 const setEnv = (key, value) => {
   log('set env %s=%s', key, value)
   process.env[key] = value
 }
+
+const isOuter = () => process.env.CAVIAR_SANDBOX === 'outer'
 
 class ApolloEnvPlugin {
   constructor ({
@@ -21,8 +21,8 @@ class ApolloEnvPlugin {
   }
 
   _generateApp () {
-    const sandbox = isNotInSandbox()
-    const options = sandbox
+    const outer = isOuter()
+    const options = outer
       ? {
         ...this._apolloOptions,
         // Do not enable update notification
@@ -38,7 +38,7 @@ class ApolloEnvPlugin {
       keys: this._keys
     })
 
-    if (!sandbox) {
+    if (!outer) {
       app.on('change', ({key, newValue}) => {
         setEnv(key, newValue)
       })
@@ -57,14 +57,16 @@ class ApolloEnvPlugin {
     })
   }
 
+  // Mark it as a sandbox plugin,
+  // so that it will only be applied when caviar sandbox is used
   get sandbox () {
-    return isNotInSandbox()
+    return true
   }
 
   apply (getHooks) {
     const hooks = getHooks()
 
-    if (isNotInSandbox()) {
+    if (isOuter()) {
       hooks.sandboxEnvironment.tapPromise(
         PLUGIN_NAME,
         async sandbox => {

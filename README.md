@@ -3,7 +3,9 @@
 
 # @caviar/ctrip-apollo-env-plugin
 
-[Caviar](https://github.com/caviarjs/caviar) plugin to apply configurations from Ctrip's [apollo](https://github.com/ctripcorp/apollo) config service to `process.env`
+[Caviar](https://github.com/caviarjs/caviar) plugin to apply configurations from Ctrip's [apollo](https://github.com/ctripcorp/apollo) config service to `process.env`.
+
+`@caviar/ctrip-apollo-env-plugin` is a caviar sandbox plugin which means it only works if caviar sandbox is used.
 
 ## Install
 
